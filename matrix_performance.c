@@ -1,3 +1,29 @@
+/*
+ * This sample program is to establish the improvement in performance 
+ * with cpu caches.
+ *                      ________________
+ *            -------->|   Main Memory  |
+ *           |         |________________|
+ *           |
+ *           |
+ *      ===============================================
+ *           ^          
+ *           |   _____________        ___________
+ *           -->|  Cpu Cache |<----->|  Cpu Core |  
+ *              |____________|       |___________|
+ *
+ *                Cache layout in a CPU
+ *                =====================
+ *
+ * Here, we have two functions matrix_row_wise_read and matrix_column_wise_read.
+ * matrix_row_wise_read:    Reads all columns in a row and go to next row.
+ * matrix_column_wise_read: Reads all rows in a column and go to next column.
+ *
+ * matrix_row_wise_read exhibits spatial locality in the cpu cache more than
+ * matrix_column_wise_read. This results in the performance difference between
+ * row wise read and column wise read.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -17,9 +43,7 @@ matrix_row_wise_read (matrix_t     **matrix, u_int n_rows, u_int n_columns)
 	for (row = 0; row < n_rows; row++) {
 		for (column = 0; column < n_columns; column++) {
 			value = matrix[row][column];
-			//printf("%d\t", value);
 		}
-		//printf("\n");
 	}
 }
  
@@ -35,9 +59,7 @@ matrix_column_wise_read (matrix_t     **matrix, u_int n_rows, u_int n_columns)
 	for (column = 0; column < n_rows; column++) {
 		for (row = 0; row < n_columns; row++) {
 			value = matrix[row][column];
-			//printf("%d\t", value);
 		}
-		//printf("\n");
 	}
 }
 
@@ -64,7 +86,6 @@ main (u_int	argc, char *argv[])
 	printf("Main ptr: %p\n", matrix);
 	for (column = 0; column<n_columns; column++) {
 		*(matrix+column) = calloc(n_columns, sizeof(u_int));
-		//printf("column: %d %p\n", column, *(matrix+column));
 	}
 
 	for (row = 0; row < n_rows; row++) {
@@ -86,7 +107,5 @@ main (u_int	argc, char *argv[])
 
 	time_taken = ((double)t)/CLOCKS_PER_SEC; // calculate the elapsed time
 	printf("Row wise read time: %f\n", time_taken);	
-
-
 }
 
